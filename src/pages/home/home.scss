@@ -1,0 +1,76 @@
+.home {
+  display: flex;
+
+  .homeContainer {
+    flex: 6;
+    overflow:hidden;
+    .widgets {
+      display: flex;
+      flex-wrap:wrap; // đẳng cấp
+      padding: 20px;
+      gap: 20px;
+      width:95%;
+    };
+    .charts {
+      display: flex;
+      padding: 20px;
+      gap: 20px;
+      width:95%;
+      flex-wrap:wrap;
+    }
+    .charts {
+      padding: 5px 20px;
+    }
+
+    .listContainer {
+      -webkit-box-shadow: 2px 4px 10px 1px rgba(0, 0, 0, 0.47);
+      box-shadow: 2px 4px 10px 1px rgba(201, 201, 201, 0.47);
+      padding: 20px;
+      margin: 20px;
+
+      .listTitle {
+        font-weight: 500;
+        color: gray;
+        margin-bottom: 15px;
+      }
+    }
+  }
+
+  .menu_btn{
+    display:none;
+  };
+  .menu_btn_close{
+    display:none;
+  }
+}
+
+
+@media (max-width: 530px) {
+  .home {
+    .menu_btn{
+      display:block;
+      position:fixed;
+      top:10px;
+      left:10px;
+      z-index:100;
+      cursor:pointer;
+      &:hover{
+          transition:all 0.3s;
+          transform:scale(1.05)
+      }
+    }
+    .menu_btn_close{
+      display:block;
+      position:fixed;
+      top:5px;
+      left:105px;
+      z-index:100;
+      cursor:pointer;
+      &:hover{
+        transition:all 0.3s;
+        transform:scale(1.05) rotate(360deg);
+
+      }
+    }
+  }
+}

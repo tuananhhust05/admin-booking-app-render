@@ -1,0 +1,43 @@
+.list {
+  display: flex;
+  width: 100%;
+  .listContainer {
+    flex: 6;
+  };
+  .menu_btn{
+    display:none;
+  };
+  .menu_btn_close{
+    display:none;
+  }
+}
+
+@media (max-width: 530px) {
+  .list {
+    .menu_btn{
+      display:block;
+      position:fixed;
+      top:10px;
+      left:10px;
+      z-index:100;
+      cursor:pointer;
+      &:hover{
+          transition:all 0.3s;
+          transform:scale(1.05)
+      }
+    }
+    .menu_btn_close{
+      display:block;
+      position:fixed;
+      top:5px;
+      left:105px;
+      z-index:100;
+      cursor:pointer;
+      &:hover{
+        transition:all 0.3s;
+        transform:scale(1.05) rotate(360deg);
+
+      }
+    }
+  }
+}

@@ -1,0 +1,211 @@
+.navbar {
+  height: 50px;
+  border-bottom: 0.5px solid rgb(231, 228, 228);
+  display: flex;
+  align-items: center;
+  font-size: 14px;
+  color: #555;
+
+  .wrapper {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .search {
+      display: flex;
+      align-items: center;
+      border: 0.5px solid lightgray;
+      padding: 3px;
+      width:30%;
+      input {
+        border: none;
+        outline: none;
+        background: transparent;
+
+        &::placeholder {
+          font-size: 12px;
+        }
+      }
+    }
+
+    .items {
+      display: flex;
+      align-items: center;
+
+      .item {
+        display: flex;
+        align-items: center;
+        margin-right: 20px;
+        position: relative;
+
+        .icon {
+          font-size: 20px;
+          cursor:pointer;
+        }
+
+        .avatar {
+          width: 30px;
+          height: 30px;
+          border-radius: 50%;
+        }
+
+        .counter {
+          width: 15px;
+          height: 15px;
+          background-color: red;
+          border-radius: 50%;
+          color: white;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-size: 10px;
+          font-weight: bold;
+          position: absolute;
+          top: -5px;
+          right: -5px;
+        }
+      }
+    }
+  }
+
+
+  .notification_list{
+    position:fixed;
+    background-color:white;
+    border-radius:15px;
+    z-index:11;
+    width:600px;
+    height:400px;
+    left:30%;
+    top:15%;
+    padding:50px;
+    display: flex;
+    flex-direction: column;
+    .notification_list_wrapper{
+      overflow-y: auto;
+      .notification_list_ele_wrapper{
+        position:relative;
+        &:hover{
+          transition:all ease 0.3s;
+          transform:scale(1.02);
+          cursor:pointer;
+          background-color:rgba(46, 118, 240, 0.2);
+          border-radius:10px;
+        };
+        .notification_list_ele{
+          display:flex;
+          padding:10px;
+          color:rgba(46, 118, 193, 0.7);
+          cursor:pointer;
+          border-radius:15px;
+          .notification_list_ele_icon{
+            margin:15px;
+            width:50px
+          };
+          .notification_list_ele_content{
+            margin:10px 30px;
+            width:400px
+          }
+        }
+      };
+    };
+    .notification_list_title{
+      font-size:20px;
+      text-align: center;
+      font-weight:800;
+      color:rgba(46, 118, 240, 0.9);
+      margin:15px;
+    }
+  }
+  .box_chat{
+    position:fixed;
+    background-color:white;
+    border-radius:15px;
+    z-index:11;
+    width:600px;
+    height:400px;
+    left:30%;
+    top:15%;
+    padding:50px;
+    display: flex;
+    flex-direction: column;
+    overflow:hidden;
+    .message-box{
+      position:relative;
+      width:100%;
+      height:100%;
+      display: flex;
+      flex-direction: column;
+      .message_list_wrapper{
+        overflow-y: auto;
+      }
+      .message-box-input-wrapper{
+        position:absolute;
+        bottom:-50px;
+        margin:4px;
+        width:90%;
+        background-color: rgba(46, 138, 255, 0.3);
+        border-radius: 5px;
+        .message-box-input{
+          width:80%;
+          height:30px;
+          margin:30px;
+          border-radius: 4px;
+        }
+      }
+    }
+    .list_conversation{
+      display: flex;
+      flex-direction: column;
+      width:100%;
+    }
+  }
+  .background_blur{
+    background-color: #555;
+    opacity:0.1;
+    position:fixed;
+    width:100%;
+    height:100%;
+    top:0%;
+    left:0%;
+  }
+
+}
+
+
+@media (max-width: 1250px) {
+  .notification_list{
+    left:20%
+  }
+  .navbar {
+      .box_chat{
+        left:20%
+      }
+  }
+}
+
+@media (max-width: 1030px) {
+  .navbar {
+      .box_chat{
+        left:10%;
+        max-width: 80%;
+        overflow: hidden;
+        padding:50px 10px;
+      }
+  }
+  .notification_list{
+    left:10%;
+    max-width: 90%;
+    overflow: hidden;
+  }
+  
+}
+@media (max-width: 530px) {
+  .navbar{
+    .wrapper{
+        margin-left:5%;
+    }
+  }
+}

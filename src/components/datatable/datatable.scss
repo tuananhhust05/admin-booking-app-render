@@ -1,0 +1,207 @@
+.brother{
+  position:fixed;
+  width:100%;
+  height:100%;
+  top:0%;
+  right:0%;
+  background-color: #888888 ;
+  z-index:10;
+  opacity:0.3;
+}
+
+.datatable {
+  height: 600px;
+  padding: 20px;
+  
+  .datatableTitle{
+    width: 100%;
+    font-size: 24px;
+    color: gray;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    .link{
+      text-decoration: none !important;
+      color: green;
+      font-size: 16px;
+      font-weight: 400;
+      border: 1px solid green;
+      padding: 5px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+  }
+  .listdateordered{
+    position:fixed;
+    border: 10px solid;
+    border-image-slice: 1;
+    border-image-source: linear-gradient(to right bottom, #4169E1, #f62682);
+    width:500px;
+    min-height:500px;
+    z-index:101;
+    left:40%;
+    height:20%;
+    background-color: 	#4169E1 ;
+
+
+    .container_datagrid{
+      height: 300px;
+      width: 100%;
+    };
+    h3{
+      margin:10px;
+      text-align:center;
+      position:relative;
+
+      .close_icon{
+        position:absolute;
+        right:2%;
+        top:2%;
+        cursor:pointer;
+      }
+    }
+  }
+  .listroom{
+    position:fixed;
+    border-radius: 5px;
+    width:60%;
+    min-height:600px;
+    z-index:100;
+    left:20%;
+    height:30%;
+    background-color: white ;
+    box-shadow: 1px 1px #888888;
+
+    .elementData{
+      display:flex;
+      text-align: center;
+      padding: 10px 15px;
+      .elementContent{
+        padding:5px;
+      }
+    };
+
+    h3{
+      text-align: center;
+      padding:10px;
+    }
+
+    .content_order{
+      display:flex;
+      padding:10px;
+      min-height: 400px;
+      flex-wrap:wrap;
+      img{
+        width:50px;
+        height:50px;
+        border-radius:50px
+      }
+      .content_order_left{
+        flex:1;
+        .element_denied_button{
+          margin: 0px 20px;
+          background-color: rgba(46, 138, 250, 0.8);
+          width: 150px;
+          cursor:pointer;
+          text-align: center;
+          padding: 10px 0px;
+          border-radius: 10px;
+          color: red;
+          font-weight: 800;
+          margin-top:25px;
+          &:hover{
+            transition: all ease 0.3s;
+            scale: 1.05;
+            box-shadow: 2px 2px 2px #555;
+          }
+        }
+      }
+      .content_order_right{
+        flex:1;
+        .element_accept_button{
+          margin: 0px 20px;
+          background-color: rgba(46, 138, 250, 0.8);
+          width: 150px;
+          cursor:pointer;
+          text-align: center;
+          padding: 10px 0px;
+          border-radius: 10px;
+          color: green;
+          font-weight: 800;
+          &:hover{
+            transition: all ease 0.3s;
+            scale: 1.05;
+            box-shadow: 2px 2px 2px #555;
+          }
+        }
+      }
+      .element_orders{
+        display:flex;
+        margin:5px;
+        padding:5px;
+
+        div{
+          padding-left: 2px
+        }
+      }
+    }
+  }
+  .cellWithImg {
+    display: flex;
+    align-items: center;
+
+    .cellImg {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      object-fit: cover;
+      margin-right: 20px;
+    }
+  }
+
+  .cellWithStatus {
+    padding: 5px;
+    border-radius: 5px;
+
+    &.active {
+      background-color: rgba(0, 128, 0, 0.05);
+      color: green;
+    }
+    &.pending {
+      background-color: rgba(255, 217, 0, 0.05);
+      color: goldenrod;
+    }
+    &.passive {
+      background-color: rgba(255, 0, 0, 0.05);
+      color: crimson;
+    }
+  }
+
+  .cellAction {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+
+    .viewButton {
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: darkblue;
+      border: 1px dotted rgba(0, 0, 139, 0.596);
+      cursor: pointer;
+    }
+    
+    .deleteButton {
+      padding: 2px 5px;
+      border-radius: 5px;
+      color: crimson;
+      border: 1px dotted rgba(220, 20, 60, 0.6);
+      cursor: pointer;
+    }
+  }
+}
+
+.select_form_order{
+  margin: 5px 20px;
+}
