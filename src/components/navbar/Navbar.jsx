@@ -92,7 +92,7 @@ const Navbar = () => {
     try{
       dispatchredux({type: "OPENCLOSECHAT", payload: { status:true }});
       axios.post(`${url()}/conversations/getListConvByUserId`,{userId:user._id}).then((res)=>{
-        console.log(res.data)
+        // console.log(res.data)
         if(res && res.data && res.data.data){
           dispatchredux({type: "LISTCONV", payload: { listConv:res.data.data }});
           dispatchredux({type: "COUNTCONVERSATIONUNREADER", payload: { count:res.data.data.filter((e)=> Number(e.unReader) === 1).length }});

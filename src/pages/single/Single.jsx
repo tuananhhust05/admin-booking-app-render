@@ -383,7 +383,7 @@ const Single = () => {
     if( String(location.pathname.split("/")[1]) === "hotels"){
       const res = await axios.get(`${url()}/votes/TakeListInforUserVote/${id}`); 
       if(res.data && res.data.data){
-        console.log(res.data.data);
+        // console.log(res.data.data);
         setListUserVote(res.data.data);
         setOpenListUserVote(true)
       }
@@ -391,7 +391,7 @@ const Single = () => {
     else if(String(location.pathname.split("/")[1]) === "rooms"){
       const res = await axios.get(`${url()}/votes/TakeListInforUserVoteRoom/${id}`); 
       if(res.data && res.data.data){
-        console.log(res.data.data);
+        // console.log(res.data.data);
         setListUserVote(res.data.data);
         setOpenListUserVote(true)
       }

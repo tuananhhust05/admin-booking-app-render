@@ -80,7 +80,7 @@ const Datatable = ({columns}) => {
     const takeData= async ()=>{ 
       try{
         let data = await axios.get(`${link}`);
-        console.log(String(path.split("/")[0]));
+        // console.log(String(path.split("/")[0]));
         if( data && data.data && data.data.length){
           if(String(path.split("/")[0]) === "hotels"){
             setListHotel(data.data); 
@@ -91,7 +91,7 @@ const Datatable = ({columns}) => {
             }
           }
           else if (String(path.split("/")[0]) === "users"){
-            console.log("Thiết lập dữ liệu user", data.data)
+            // console.log("Thiết lập dữ liệu user", data.data)
             setListUser(data.data);
           }
           else if (String(path.split("/")[0]) === "rooms"){
@@ -129,7 +129,7 @@ const Datatable = ({columns}) => {
     else if (String(path.split("/")[0]) === "users"){
 
       let result = await axios.get(`${url()}/users/takeinforuserbymail/${rowData._id}`);
-      console.log(result)
+      // console.log(result)
       setShowDetail(true);
       setDetailUser(result.data.data.userinfor)
     }
@@ -137,7 +137,7 @@ const Datatable = ({columns}) => {
   
   // hàm show danh sách phòng đã cho thuê của 1 room chỉ khi hiển thị danh sách room mới có 
   const handleShowListUnavailableDates = async (data) =>{
-    console.log(data);
+    // console.log(data);
     let result = await axios.get(`${url()}/orders/TakeUnAvailableDateByOrderRoomId/${data._id}`);
     let listDate =[];
     let id= 1;;
