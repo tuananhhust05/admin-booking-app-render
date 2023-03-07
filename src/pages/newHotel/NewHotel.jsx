@@ -5,7 +5,7 @@ import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import { hotelInputs } from "../../formSource";
-import useFetch from "../../hooks/useFetch";
+// import useFetch from "../../hooks/useFetch";
 import axios from "axios";
 import {url} from '../../config.js'
 import Notification from "../../components/notification/Notification";
@@ -14,7 +14,7 @@ const NewHotel = () => {
   const [info, setInfo] = useState({}); // biến chứa thông tin khách sạn 
   const [showNotification,setShowNotification] = useState(false);
   const [contentNotification,setContentNotification]= useState("");
-  const { data, loading, error } = useFetch("/rooms");
+  // const { data, loading, error } = useFetch("/rooms");
   const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   const handleChange = (e) => {
@@ -35,16 +35,11 @@ const NewHotel = () => {
     str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
     str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
     str = str.replace(/Đ/g, "D");
-    // Some system encode vietnamese combining accent as individual utf-8 characters
-    // Một vài bộ encode coi các dấu mũ, dấu chữ như một kí tự riêng biệt nên thêm hai dòng này
-    str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); // ̀ ́ ̃ ̉ ̣  huyền, sắc, ngã, hỏi, nặng
-    str = str.replace(/\u02C6|\u0306|\u031B/g, ""); // ˆ ̆ ̛  Â, Ê, Ă, Ơ, Ư
-    // Remove extra spaces
-    // Bỏ các khoảng trắng liền nhau
+    str = str.replace(/\u0300|\u0301|\u0303|\u0309|\u0323/g, ""); 
+    str = str.replace(/\u02C6|\u0306|\u031B/g, ""); 
     str = str.replace(/ + /g," ");
     str = str.trim();
-  
-    str = str.replace(/!|%|\^|\*|\(|\)|\+|\=|\<|\>|\?|\/|,|\.|\:|\;|\'|\"|\&|\#|\[|\]|~|\$|_|`|-|{|}|\||\\/g," ");
+    str = str.replace(/!|%|\^|\*|\(|\)|\+|\?|\/|,|\.|\[|\]|~|\$|_|`|-|{|}|\||\\/g," ");
     return str;
   }
   const handleClick = async (e) => {
@@ -54,7 +49,7 @@ const NewHotel = () => {
         if(response && response.data && response.data._id){
             setShowNotification(true);
             setContentNotification("Send request successfully");
-            const timer = setTimeout(() => {
+            setTimeout(() => {
               setShowNotification(false);
               navigate("/hotels");
             }, 2000);
@@ -62,7 +57,7 @@ const NewHotel = () => {
         else{
           setShowNotification(true);
           setContentNotification("Send request failed");
-          const timer = setTimeout(() => {
+          setTimeout(() => {
             setShowNotification(false);
             navigate("/hotels");
           }, 2000);
@@ -71,7 +66,7 @@ const NewHotel = () => {
           console.log(e);
           setShowNotification(true);
           setContentNotification("Send request failed");
-          const timer = setTimeout(() => {
+          setTimeout(() => {
             setShowNotification(false);
             navigate("/hotels");
           }, 2000);

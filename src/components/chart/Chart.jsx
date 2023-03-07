@@ -7,7 +7,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import { useEffect, useState ,useContext, useCallback } from "react";
+import { useEffect, useState ,useContext} from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from 'axios'
 import {url} from '../../config.js'
@@ -17,13 +17,13 @@ const Chart = ({ aspect, title }) => {
   useEffect(() => {
     const takeData= async()=>{ 
       const res = await axios.get(`${url()}/orders/TakeInComeSixMonthLatest/${user._id}`); // gửi token để check 
-      console.log("Dữ liệu biểu đồ",res.data)
+      // console.log("Dữ liệu biểu đồ",res.data)
       if(res && res.data){
         setData(res.data)
       }
     }
     takeData();
-  }, []);
+  }, [user._id]);
   return (
     <div className="chart">
       <div className="title">{title}</div>

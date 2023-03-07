@@ -24,7 +24,7 @@ const Single = () => {
   const Data = useSelector(SearchDataSelector);
   const dispatchredux = useDispatch();
   const { user } = useContext(AuthContext);
-  const { loading, error, dispatch } = useContext(AuthContext);
+  const { dispatch } = useContext(AuthContext);
   // chỉ hiển thị thông tin về khách sạn và loại phòng 
   const navigate = useNavigate();
   const location = useLocation(); 
@@ -118,7 +118,7 @@ const Single = () => {
               EditCommentListState(commentEdit,res.data.data);
               setCommentReply("");
               setCommentReplyMode("");
-              socket.emit("editcomment",listUserCare.filter((e)=> e!= user._id),res.data.data,"hotels");
+              socket.emit("editcomment",listUserCare.filter((e)=> String(e) !== String(user._id)),res.data.data,"hotels");
             }
           }
           else if(String(path) === "rooms"){
@@ -127,7 +127,7 @@ const Single = () => {
               EditCommentListState(commentEdit,res.data.data);
               setCommentReply("");
               setCommentReplyMode("");
-              socket.emit("editcomment",listUserCare.filter((e)=> e!= user._id),res.data.data,"rooms");
+              socket.emit("editcomment",listUserCare.filter((e)=> String(e) !== String(user._id)),res.data.data,"rooms");
             }
           }
           else if(String(path) === "users"){
@@ -148,7 +148,7 @@ const Single = () => {
                 else if(res && res.data && res.data.data){
                   setListComment(current => [res.data.data,...current]);
                   setCommentReply("");
-                  socket.emit("comment",listUserCare.filter((e)=> e!= user._id),res.data.data,"hotels");
+                  socket.emit("comment",listUserCare.filter((e)=> String(e) !== String(user._id)),res.data.data,"hotels");
                   for(let i =0; i<listUserCare.length; i++){
                       let newNotification = {
                         content:`You have a new comment in hotel ${data.name}`,
@@ -176,7 +176,7 @@ const Single = () => {
                   else if(res && res.data && res.data.data){
                     setListComment(current => [res.data.data,...current]);
                     setCommentReply("");
-                    socket.emit("comment",listUserCare.filter((e)=> e!= user._id),res.data.data,"rooms");
+                    socket.emit("comment",listUserCare.filter((e)=> String(e) !== String(user._id)),res.data.data,"rooms");
                     for(let i =0; i<listUserCare.length; i++){
                       let newNotification = {
                         content:`You have a new comment in room ${data.desc} hotel ${data.hotelNameOwn}`,
@@ -223,7 +223,7 @@ const Single = () => {
          setListComment((current) =>
             current.filter((e) => String(e._id) !== String(res.data.data))
          );
-         socket.emit("deletecomment",listUserCare.filter((e)=> e!= user._id),res.data.data,"hotels");
+         socket.emit("deletecomment",listUserCare.filter((e)=> String(e) !== String(user._id)),res.data.data,"hotels");
         }
       }
       else if(String(path)=== "rooms"){
@@ -232,7 +232,7 @@ const Single = () => {
          setListComment((current) =>
             current.filter((e) => String(e._id) !== String(res.data.data))
          );
-         socket.emit("deletecomment",listUserCare.filter((e)=> e!= user._id),res.data.data,"rooms");
+         socket.emit("deletecomment",listUserCare.filter((e)=> String(e) !== String(user._id)),res.data.data,"rooms");
         }
       }
       else if(String(path)=== "users"){
@@ -253,7 +253,7 @@ const Single = () => {
     const takeData= async ()=>{ 
         if( String(location.pathname.split("/")[1]) === "hotels"){
           // dữ liệu về khách sạn
-          const res = await axios.get(`${url()}/hotels/find/${id}`).then((res)=>{
+          axios.get(`${url()}/hotels/find/${id}`).then((res)=>{
             if(res && res.data && res.data._id){
               setData(res.data);
               setDataHotelToEdit(res.data)
@@ -323,47 +323,47 @@ const Single = () => {
 
         }
         socket.on("comment",(comment,type)=>{
-          if( (String(location.pathname.split("/")[1]) === "hotels") && (type == "hotels") ){
+          if( (String(location.pathname.split("/")[1]) === "hotels") && ( String(type) === "hotels") ){
              if(comment && comment._id && (!comment.roomId) && (!comment.userIdHostPage) 
-                && comment.hotelId && (comment.hotelId == id)){
+                && comment.hotelId && (String(comment.hotelId) === id)){
                  setListComment(current => [comment,...current]);
              }
           }
-          else if((String(location.pathname.split("/")[1]) === "rooms") && (type == "rooms") ){
+          else if((String(location.pathname.split("/")[1]) === "rooms") && (String(type) === "rooms") ){
               if(comment && comment._id && (comment.roomId) && (!comment.userIdHostPage) 
-                  && comment.hotelId && (comment.roomId == id)){
+                  && comment.hotelId && (String(comment.roomId) === id)){
                   setListComment(current => [comment,...current]);
               }
           }
         })
         socket.on("editcomment",(comment,type)=>{
-          if( (String(location.pathname.split("/")[1]) === "hotels") && (type == "hotels") ){
+          if( (String(location.pathname.split("/")[1]) === "hotels") && (String(type) === "hotels") ){
              if(comment && comment._id && (!comment.roomId) && (!comment.userIdHostPage) 
-                && comment.hotelId && (comment.hotelId == id)){
+                && comment.hotelId && (String(comment.hotelId) === id)){
                   setListComment(current => current.map(
-                    (element, i) => element._id == comment._id ? comment
+                    (element, i) => String(element._id) === comment._id ? comment
                                             : element
                   ));
               
              }
           }
-          if( (String(location.pathname.split("/")[1]) === "rooms") && (type == "rooms") ){
+          if( (String(location.pathname.split("/")[1]) === "rooms") && (String(type) === "rooms") ){
             if(comment && comment._id && (comment.roomId) && (!comment.userIdHostPage) 
-               && comment.hotelId && (comment.roomId == id)){
+               && comment.hotelId && (String(comment.roomId) === id)){
                  setListComment(current => current.map(
-                   (element, i) => element._id == comment._id ? comment
+                   (element, i) => String(element._id) === String(comment._id) ? comment
                                            : element
                  ));
             }
           }
         })
         socket.on("deletecomment",(commentId,type)=>{
-          if( (String(location.pathname.split("/")[1]) === "hotels") && (type == "hotels") ){
+          if( (String(location.pathname.split("/")[1]) === "hotels") && (String(type) === "hotels") ){
             setListComment((current) =>
                current.filter((e) => String(e._id) !== String(commentId))
             );
           }
-          if( (String(location.pathname.split("/")[1]) === "rooms") && (type == "rooms") ){
+          if( (String(location.pathname.split("/")[1]) === "rooms") && (String(type) === "rooms") ){
             setListComment((current) =>
                current.filter((e) => String(e._id) !== String(commentId))
             );
@@ -377,7 +377,7 @@ const Single = () => {
       navigate("/");
       console.log(e);
     }
-  },[])
+  },[id,location.pathname,navigate,socket])
 
   const takeListUserVote  = async ()=>{
     if( String(location.pathname.split("/")[1]) === "hotels"){
@@ -443,7 +443,7 @@ const Single = () => {
         }
       }
       else if (String(location.pathname.split("/")[1]) === "users"){
-        if(id == user._id){
+        if(String(id) === String(user._id)){
           let res = await axios.put(`${url()}/users/${id}`,dataUserToEdit);
           if(res && res.data){
             setData(res.data);
@@ -498,8 +498,8 @@ const Single = () => {
     try{
        setOpenFormChangePass(false);
        if(dataToChangePass.passold && dataToChangePass.passnew && dataToChangePass.repassnew && user && user._id){
-          if(dataToChangePass.repassnew == dataToChangePass.passnew){
-              if(dataToChangePass.passold != dataToChangePass.passnew){
+          if(String(dataToChangePass.repassnew) === String(dataToChangePass.passnew)){
+              if(String(dataToChangePass.passold) !== String(dataToChangePass.passnew)){
                   let dataSend ={
                       _id:user._id,
                       passold:dataToChangePass.passold,
@@ -509,7 +509,7 @@ const Single = () => {
                   axios.post(`${url()}/auth/changePass`,dataSend).then((response)=>{
                     if(response && response.data && response.data.data){
                         setShowNotification(true);
-                        const timer = setTimeout(() => {
+                        setTimeout(() => {
                           setShowNotification(false);
                         }, 5000);
                         setContentNotification("Updated successfully");
@@ -521,7 +521,7 @@ const Single = () => {
                     }
                     else{
                         setShowNotification(true);
-                        const timer = setTimeout(() => {
+                        setTimeout(() => {
                           setShowNotification(false);
                         }, 5000);
                         setContentNotification("Updated failed");
@@ -533,7 +533,7 @@ const Single = () => {
                     }
                   }).catch((e)=>{
                       setShowNotification(true);
-                      const timer = setTimeout(() => {
+                      setTimeout(() => {
                         setShowNotification(false);
                       }, 5000);
                       setContentNotification("Updated failed");
@@ -546,7 +546,7 @@ const Single = () => {
               }
               else{
                 setShowNotification(true);
-                const timer = setTimeout(() => {
+                setTimeout(() => {
                   setShowNotification(false);
                 }, 5000);
                 setContentNotification("New password is similar to old password");
@@ -559,7 +559,7 @@ const Single = () => {
           }
           else{
             setShowNotification(true);
-            const timer = setTimeout(() => {
+            setTimeout(() => {
               setShowNotification(false);
             }, 5000);
             setContentNotification("New password is not similar to old password");
@@ -585,7 +585,7 @@ const Single = () => {
         }
         accceptedFiles.forEach(pic => {
           let type = String(pic.path).split(".")[String(pic.path).split(".").length-1].toLowerCase();
-          if(listType.find((e)=> e == type)){
+          if(listType.find((e)=> String(e) === type)){
             formData.append("files",pic);
           }
         });
@@ -601,7 +601,7 @@ const Single = () => {
               console.log(e)
             })
         }
-        else if(path == "users"){
+        else if( String(path) === "users"){
           formData.append("userId",user._id);
           axios.post(`${url()}/users/UploadAvartar`, formData, config)
           .then(async (response) => {
@@ -642,7 +642,7 @@ const Single = () => {
             <div onClick={()=>setOpenEditForm(true)} className="editButton">Edit</div>
             <h1 className="title">Information</h1>
             {
-              (path === "hotels") &&(
+              ( String(path) === "hotels") &&(
                   (data !== {}) && (
                       <div className="item">
                           <img
@@ -695,7 +695,7 @@ const Single = () => {
               )
             }
             {
-              (path === "rooms") &&(
+              (String(path) === "rooms") &&(
                   (data !== {}) && (
                       <div className="item">
                           <img
@@ -754,7 +754,7 @@ const Single = () => {
               )
             }
             {
-              (path === "users") &&(
+              (String(path) === "users") &&(
                   (data !== {}) && (
                       <div className="item">
                           <img
@@ -800,7 +800,7 @@ const Single = () => {
                               </span>
                             </div>
                             {
-                              (id == user._id) && (
+                              (String(id) === String(user._id)) && (
                                 <div 
                                     onClick={()=>setOpenFormChangePass(true)}
                                     className="detailItem changePassBtn">
@@ -816,7 +816,7 @@ const Single = () => {
             }
           </div>
           {
-            ( (path === "hotels") && (data !== {}) && (data.photos) && (data.photos.length>0) )
+            ( (String(path) === "hotels") && (data !== {}) && (data.photos) && (data.photos.length>0) )
             && (
               <div className="right">
                   <div className="img1">
@@ -963,7 +963,7 @@ const Single = () => {
                       data.photos.map(imgSource=>
                         ( <div key={imgSource} className="img_listImage_wrapper">
                             <CloseIcon onClick={()=>handeDeleteImgHotel(id,imgSource)} className="close_icon"/>
-                             <img  src={imgSource} className="img_listImage"/>
+                             <img  alt="" src={imgSource} className="img_listImage"/>
                           </div>
                         )
                       )

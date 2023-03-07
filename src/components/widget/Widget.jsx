@@ -10,7 +10,7 @@ import axios from 'axios'
 import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 const Widget = ({ type }) => {
-  let data; // dự vào type set dữ liệu cho data => tạo ra ui hiển thị dữ liệu cứng 
+  let data; 
   const { user } = useContext(AuthContext);
   //temporary
   const [amount,setAmount] = useState(100);
@@ -18,19 +18,19 @@ const Widget = ({ type }) => {
 
   useEffect(() => {
     const checkUser= async()=>{ 
-        if(type == "user"){
+        if(String(type) === "user"){
           const res = await axios.get(`${url()}/users/countlistuserorderedbyownerid/${user._id}`); // gửi token để check 
           setAmount(res.data.count)
         }
-        else if(type == "order"){
+        else if(String(type) === "order"){
           const res = await axios.get(`${url()}/orders/countorderbyownerid/${user._id}`); // gửi token để check 
           setAmount(res.data.count)
         }
-        else if(type == "revenue"){
+        else if(String(type) === "revenue"){
           const res = await axios.get(`${url()}/orders/SumOrderByOwnerIdBefore/${user._id}`); // gửi token để check 
           setAmount(res.data.sum)
         }
-        else if(type == "contract"){
+        else if(String(type) === "contract"){
           const res = await axios.get(`${url()}/orders/SumOrderByOwnerIdAfter/${user._id}`); // gửi token để check 
           setAmount(res.data.sum)
         }
@@ -43,7 +43,7 @@ const Widget = ({ type }) => {
     catch(e){
       console.log(e);
     }
-  },[type])
+  },[type,user])
   
   // dựa vào prop truyền vào để set dữ liệu cho biết ở trong ( và đây k phải là state)
   switch (type) {

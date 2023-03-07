@@ -7,7 +7,7 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import {url} from '../../config.js'
-import { useEffect, useState ,useContext, useCallback } from "react";
+import { useEffect, useState ,useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import axios from 'axios'
 
@@ -34,7 +34,7 @@ const List = () => {
       }
     }
     takeData();
-  }, []);
+  }, [user._id]);
   // const rows = [
   //   {
   //     id: 1143155,

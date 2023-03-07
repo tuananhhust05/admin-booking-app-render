@@ -26,7 +26,7 @@ const NewRoom = () => {
   const handleClick = async (e) => {
     e.preventDefault();
     if(hotelId){
-        let hotelChoose = listhotel.find((e)=> e._id == hotelId);
+        let hotelChoose = listhotel.find((e)=> String(e._id) === String(hotelId));
         let request = {
            hotelOwner:hotelId,
            Owner:user._id,
@@ -41,7 +41,7 @@ const NewRoom = () => {
           if(response && response.data && response.data.data){
               setShowNotification(true);
               setContentNotification("Send request successfully");
-              const timer = setTimeout(() => {
+              setTimeout(() => {
                 setShowNotification(false);
                 navigate("/rooms");
               }, 2000);
@@ -49,7 +49,7 @@ const NewRoom = () => {
           else{
             setShowNotification(true);
             setContentNotification("Send request failed");
-            const timer = setTimeout(() => {
+            setTimeout(() => {
               setShowNotification(false);
               navigate("/rooms");
             }, 2000);
@@ -58,7 +58,7 @@ const NewRoom = () => {
             console.log(e);
             setShowNotification(true);
             setContentNotification("Send request failed");
-            const timer = setTimeout(() => {
+            setTimeout(() => {
               setShowNotification(false);
               navigate("/rooms");
             }, 2000);
@@ -83,7 +83,7 @@ const NewRoom = () => {
     catch(e){
       console.log(e);
     }
-  },[])
+  },[user._id])
 
   const handleChoosehotel = async (hotelId)=>{
     try{

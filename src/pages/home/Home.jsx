@@ -7,17 +7,17 @@ import Chart from "../../components/chart/Chart";
 import Table from "../../components/table/Table";
 import MenuIcon from '@mui/icons-material/Menu';
 import CloseIcon from '@mui/icons-material/Close';
-import {url} from '../../config.js'
+// import {url} from '../../config.js'
 // check lại tài khoản 1 lần nữa 
-import {useEffect, useContext} from 'react'
-import { AuthContext } from "../../context/AuthContext";
-import { useNavigate } from "react-router-dom";
-import axios from "axios"
+// import {useContext} from 'react'
+// import { AuthContext } from "../../context/AuthContext";
+// import { useNavigate } from "react-router-dom";
+// import axios from "axios"
 import{SearchDataSelector} from '../../redux/selector'
 import {useSelector,useDispatch} from 'react-redux'
 const Home = () => {
-  const navigate = useNavigate();
-  const { user } = useContext(AuthContext);
+  // const navigate = useNavigate();
+  // const { user } = useContext(AuthContext);
   const Data = useSelector(SearchDataSelector);
   const dispatchredux = useDispatch();
   // useEffect(() => {

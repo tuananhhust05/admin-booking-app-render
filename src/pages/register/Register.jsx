@@ -14,7 +14,7 @@ const Register = () => {
   const [notify, setNotify] = useState(false);
   const [content, setContent]= useState("Registered failed")
   const navigate = useNavigate()
-  const { loading, error, dispatch } = useContext(AuthContext);
+  const {dispatch } = useContext(AuthContext);
   // thay đổi dữ liệu cho state up lên 
   const handleChange = (e) => {
     setCredentials((prev) => ({ ...prev, [e.target.id]: e.target.value })); 

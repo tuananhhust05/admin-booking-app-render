@@ -1,13 +1,13 @@
 import "./navbar.scss";
-import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
-import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
+// import SearchOutlinedIcon from "@mui/icons-material/SearchOutlined";
+// import LanguageOutlinedIcon from "@mui/icons-material/LanguageOutlined";
 import DarkModeOutlinedIcon from "@mui/icons-material/DarkModeOutlined";
-import FullscreenExitOutlinedIcon from "@mui/icons-material/FullscreenExitOutlined";
+// import FullscreenExitOutlinedIcon from "@mui/icons-material/FullscreenExitOutlined";
 import NotificationsNoneOutlinedIcon from "@mui/icons-material/NotificationsNoneOutlined";
 import ChatBubbleOutlineOutlinedIcon from "@mui/icons-material/ChatBubbleOutlineOutlined";
 import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
-import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
+// import ListOutlinedIcon from "@mui/icons-material/ListOutlined";
 import Conversation from "../conversation/Conversation";
 import Message from "../message/Message";
 import { DarkModeContext } from "../../context/darkModeContext";
@@ -26,7 +26,7 @@ const Navbar = () => {
   const [openListNotification,setOpenListNotification] = useState(false);
   const Data = useSelector(SearchDataSelector);
   const dispatchredux = useDispatch();  
-  const [chatOption,setChatOption] = useState("");  // sendNormal or 
+  // const [chatOption,setChatOption] = useState("");  // sendNormal or 
   const [messToSend,setMessToSend] = useState("");
   useEffect(() => {
     const takeData= async()=>{ 
@@ -42,9 +42,9 @@ const Navbar = () => {
 
       axios.post(`${url()}/conversations/getListConvByUserId`,{userId:user._id}).then((res)=>{
         if(res && res.data && res.data.data){
-          console.log("Dữ liệu conv",res.data.data);
+          // console.log("Dữ liệu conv",res.data.data);
           dispatchredux({type: "LISTCONV", payload: { listConv:res.data.data }});
-          dispatchredux({type: "COUNTCONVERSATIONUNREADER", payload: { count:res.data.data.filter((e)=> e.unReader == 1).length }});
+          dispatchredux({type: "COUNTCONVERSATIONUNREADER", payload: { count:res.data.data.filter((e)=> Number(e.unReader) === 1).length }});
         }
       }).catch((e)=>{
         console.log(e)
@@ -55,7 +55,7 @@ const Navbar = () => {
     };
     socket.on("notification",(data,additionalInfor)=>{
       dispatchredux({type: "ADDNOTIFICATION", payload: { newNotification:data }});
-      if(additionalInfor && additionalInfor.Type == "NewOrder" && additionalInfor.IdOrder){
+      if(additionalInfor && String(additionalInfor.Type) === "NewOrder" && additionalInfor.IdOrder){
            axios.get(`${url()}/orders/TakeOrderById/${additionalInfor.IdOrder}`).then((order)=>{
                if(order && order.data && order.data.data && order.data.data._id){
                   dispatchredux({type: "ADDORDERPENDING", payload: { newOrder:order.data.data }});
@@ -68,14 +68,14 @@ const Navbar = () => {
     socket.on("sendMessage",(mess)=>{
       let update_cov = {};
       update_cov.unReader=1;
-      console.log("Dữ liệu nhận được",mess);
+      // console.log("Dữ liệu nhận được",mess);
       dispatchredux({type: "ADDMESS", payload: { newMess:mess }});
     });
     socket.on('DeleteMessage',(convId,messId)=>{
         let arr = Data.listMess.filter((e) => String(e.messageId) !== String(messId));
         dispatchredux({type: "LISTMESS", payload: { listMess:arr }});
     })
-  },[])
+  },[dispatchredux,socket,user,Data.listMess])
   
 
 
@@ -95,7 +95,7 @@ const Navbar = () => {
         console.log(res.data)
         if(res && res.data && res.data.data){
           dispatchredux({type: "LISTCONV", payload: { listConv:res.data.data }});
-          dispatchredux({type: "COUNTCONVERSATIONUNREADER", payload: { count:res.data.data.filter((e)=> e.unReader == 1).length }});
+          dispatchredux({type: "COUNTCONVERSATIONUNREADER", payload: { count:res.data.data.filter((e)=> Number(e.unReader) === 1).length }});
         }
       }).catch((e)=>{
         console.log(e)
@@ -108,7 +108,7 @@ const Navbar = () => {
   const handleStartChat = (idconv)=>{
     try{ 
        dispatchredux({type: "CHANGECHATMODE", payload: { chatMode:true }});
-       let convChoose = Data.listConv.find((e)=> e._id === idconv);
+       let convChoose = Data.listConv.find((e)=> String(e._id) === String(idconv));
        if(convChoose){
           axios.post(`${url()}/conversations/LoadMessage`,{
             conversationId:idconv,
@@ -124,7 +124,7 @@ const Navbar = () => {
           }).catch((e)=>{
             console.log(e)
           });
-          if(convChoose.unReader == 1){
+          if(String(convChoose.unReader) === 1){
             dispatchredux({type: "CHANGECONVERSATIONUNREADER", payload: { count:-1 }});
           }
           let update_cov = {};
@@ -142,11 +142,11 @@ const Navbar = () => {
 
   const SendMessage = (e)=>{
     try{
-      if (e.key === "Enter") {
+      if (String(e.key) === "Enter") {
           setMessToSend("");
           let mess = {
              conversationId:Data.conversationChosen._id,
-             messageId:`${((new Date).getTime() * 10000) + 621355968000000000 +8}_${user._id}`,
+             messageId:`${(new Date().getTime() * 10000) + 621355968000000000 +8}_${user._id}`,
              message:e.target.value,
              senderId: user._id,
              emotion:[],
@@ -219,10 +219,10 @@ const Navbar = () => {
                           (
                             <div key={index}  className="notification_list_ele_wrapper">
                               {
-                                 (notification.Status == 1) ?(
+                                 ( String(notification.Status) === 1) ?(
                                     <div onClick={()=>ReadNotification(notification._id)}>
                                       { 
-                                        ((notification.type == "ReceiveOrder") || (notification.type =="AcceptOrder") || (notification.type =="DenyOrder")) && (
+                                        ((String(notification.type) === "ReceiveOrder") || (String(notification.type) ==="AcceptOrder") || (String(notification.type) === "DenyOrder")) && (
                                           <Link to={`/orders`} style={{textDecoration: "none", color:"white",fontSize:"15px"}}>
                                               <div style={{backgroundColor:"rgba(46, 138, 231, 0.6)"}} className="notification_list_ele">
                                                   <div className="notification_list_ele_icon">
@@ -236,7 +236,7 @@ const Navbar = () => {
                                         ) 
                                       }
                                       {
-                                        (notification.type == "CommentHotel") && (
+                                        (String(notification.type) === "CommentHotel") && (
                                                  <Link to={`/hotels/${notification.hotelId}`} style={{textDecoration: "none", color:"white",fontSize:"15px"}}>
                                                       <div style={{backgroundColor:"rgba(46, 138, 231, 0.6)"}} className="notification_list_ele">
                                                           <div className="notification_list_ele_icon">
@@ -250,7 +250,7 @@ const Navbar = () => {
                                         )
                                       }
                                       {
-                                        (notification.type == "CommentRoom") && (
+                                        (String(notification.type) === "CommentRoom") && (
                                                   <Link to={`/rooms/${notification.roomId}`} style={{textDecoration: "none", color:"white",fontSize:"15px"}}>
                                                               <div style={{backgroundColor:"rgba(46, 138, 231, 0.6)"}} className="notification_list_ele">
                                                                   <div className="notification_list_ele_icon">
@@ -267,7 +267,7 @@ const Navbar = () => {
                                  ):(
                                     <>
                                       { 
-                                          ((notification.type == "ReceiveOrder") || (notification.type =="AcceptOrder") || (notification.type =="DenyOrder")) && (
+                                          ((String(notification.type) === "ReceiveOrder") || (String(notification.type) ==="AcceptOrder") || (String(notification.type) ==="DenyOrder")) && (
                                             <Link to={`/orders`} style={{textDecoration: "none", color:"white",fontSize:"15px"}}>
                                                 <div  className="notification_list_ele">
                                                     <div className="notification_list_ele_icon">
@@ -281,7 +281,7 @@ const Navbar = () => {
                                           ) 
                                         }
                                         {
-                                          (notification.type == "CommentHotel") && (
+                                          (String(notification.type) === "CommentHotel") && (
                                                   <Link to={`/hotels/${notification.hotelId}`} style={{textDecoration: "none", color:"white",fontSize:"15px"}}>
                                                         <div  className="notification_list_ele">
                                                             <div className="notification_list_ele_icon">
@@ -295,7 +295,7 @@ const Navbar = () => {
                                           )
                                         }
                                         {
-                                          (notification.type == "CommentRoom") && (
+                                          (String(notification.type) === "CommentRoom") && (
                                                     <Link to={`/rooms/${notification.roomId}`} style={{textDecoration: "none", color:"white",fontSize:"15px"}}>
                                                                 <div  className="notification_list_ele">
                                                                     <div className="notification_list_ele_icon">
@@ -328,12 +328,12 @@ const Navbar = () => {
                     <div 
                        onClick={()=>{
                           dispatchredux({type: "CHANGECHATMODE", payload: { chatMode:false }});
-                          setChatOption("");
+                          // setChatOption("");
                           axios.post(`${url()}/conversations/getListConvByUserId`,{userId:user._id}).then((res)=>{
                             if(res && res.data && res.data.data){
-                              console.log("Dữ liệu conv",res.data.data);
+                              // console.log("Dữ liệu conv",res.data.data);
                               dispatchredux({type: "LISTCONV", payload: { listConv:res.data.data }});
-                              dispatchredux({type: "COUNTCONVERSATIONUNREADER", payload: { count:res.data.data.filter((e)=> e.unReader == 1).length }});
+                              dispatchredux({type: "COUNTCONVERSATIONUNREADER", payload: { count:res.data.data.filter((e)=> Number(e.unReader) === 1).length }});
                             }
                           }).catch((e)=>{
                             console.log(e)

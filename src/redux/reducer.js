@@ -12,7 +12,6 @@ const INITIAL_STATE = {
     listNotification:[],
     isOpenChat:false,
     listOrder:[],
-    listNotification:[],
     countConversationUnreader:0,
     listConv:[],
     chatMode:false,
@@ -38,10 +37,10 @@ const SearchReducerRedux = (state =INITIAL_STATE, action) => {  // state lấy m
       case "ADDMESS":
         return { 
           ...state, 
-          listMess: (state.chatMode && state.conversationChosen._id && (state.conversationChosen._id == action.payload.newMess.conversationId)) ? [action.payload.newMess,...state.listMess] : state.listMess,
-          countConversationUnreader: (state.chatMode && state.conversationChosen._id && (state.conversationChosen._id == action.payload.newMess.conversationId)) ? state.countConversationUnreader : (state.countConversationUnreader + 1),
+          listMess: (state.chatMode && state.conversationChosen._id && (String(state.conversationChosen._id) === String(action.payload.newMess.conversationId))) ? [action.payload.newMess,...state.listMess] : state.listMess,
+          countConversationUnreader: (state.chatMode && state.conversationChosen._id && (String(state.conversationChosen._id) === String(action.payload.newMess.conversationId))) ? state.countConversationUnreader : (state.countConversationUnreader + 1),
           listConv: state.listConv.map(
-            (conv, i) => conv._id == action.payload.newMess.conversationId ? 
+            (conv, i) => String(conv._id) === String(action.payload.newMess.conversationId) ? 
                                      {
                                        unReader:1,
                                        _id:action.payload.newMess.conversationId,
@@ -86,7 +85,7 @@ const SearchReducerRedux = (state =INITIAL_STATE, action) => {  // state lấy m
         return { 
           ...state, 
           listConv: state.listConv.map(
-            (conv, i) => conv._id == action.payload.idconv ? action.payload.updateConv
+            (conv, i) => String(conv._id) === action.payload.idconv ? action.payload.updateConv
                                     : conv
           )
         }
@@ -108,7 +107,7 @@ const SearchReducerRedux = (state =INITIAL_STATE, action) => {  // state lấy m
       case "REMOVEPENDINGORDER":
         return{
           ...state, 
-          listOrderPending: state.listOrderPending.filter(item => item._id != action.payload.OrderId),
+          listOrderPending: state.listOrderPending.filter(item => String(item._id) !== action.payload.OrderId),
         }
       case "LISTNOTIFICATION":
         return { 
@@ -124,7 +123,7 @@ const SearchReducerRedux = (state =INITIAL_STATE, action) => {  // state lấy m
         return { 
           ...state, 
           listNotification: state.listNotification.map(
-            (notification, i) => notification._id == action.payload.idNotify ? {...notification, Status: 0}
+            (notification, i) => String(notification._id) === String(action.payload.idNotify) ? {...notification, Status: 0}
                                     : notification
           )
         }

@@ -6,11 +6,11 @@ import DateRangeIcon from '@mui/icons-material/DateRange';
 import CloseIcon from '@mui/icons-material/Close';
 // import { userColumns, userRows } from "../../datatablesource";
 import { Link, useLocation } from "react-router-dom";
-import { useEffect, useState ,useContext, useCallback } from "react";
+import { useEffect, useState ,useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import {useSelector,useDispatch} from 'react-redux' // redux 
 import{SearchDataSelector} from '../../redux/selector' 
-import useFetch from "../../hooks/useFetch";
+// import useFetch from "../../hooks/useFetch";
 import axios from "axios";
 import {url} from '../../config.js'
 import {socketCient} from '../../config.js'
@@ -86,7 +86,7 @@ const Datatable = ({columns}) => {
             setListHotel(data.data); 
           }
           else if (String(path.split("/")[0]) === "orders"){
-            if(typeOrder != "Pending"){
+            if( String(typeOrder) !== "Pending"){
               setListOrder(data.data);
             }
           }
@@ -106,10 +106,10 @@ const Datatable = ({columns}) => {
     if(user){
        takeData();
     }
-  }, [path]);
+  }, [path,link,typeOrder,user]);
 
   // chống khởi tạo hàm nhiều lần vì trong hàm sử dụng các state bị thay đổi và hai hàm không bao giờ bằng nhau 
-  const handleOnClick= useCallback( async (rowData) => {
+  const handleOnClick= async (rowData) => {
     if(String(path.split("/")[0]) === "hotels"){
         setShowDetail(true);
         setDataToLinkHotel(rowData._id)
@@ -133,10 +133,10 @@ const Datatable = ({columns}) => {
       setShowDetail(true);
       setDetailUser(result.data.data.userinfor)
     }
-  })
+  }
   
   // hàm show danh sách phòng đã cho thuê của 1 room chỉ khi hiển thị danh sách room mới có 
-  const handleShowListUnavailableDates = useCallback( async (data) =>{
+  const handleShowListUnavailableDates = async (data) =>{
     console.log(data);
     let result = await axios.get(`${url()}/orders/TakeUnAvailableDateByOrderRoomId/${data._id}`);
     let listDate =[];
@@ -152,12 +152,12 @@ const Datatable = ({columns}) => {
     setOpenListUnavailableDates(true);
     setInforRoomChosen(data.number)
     setListUnavailableDates(listDate);
-  })
+  }
   // ẩn thông tin các form 
-  const handleHideInfor = useCallback(()=>{
+  const handleHideInfor = ()=>{
     setShowDetail(false);
     setOpenListUnavailableDates(false)
-  })
+  }
   // const handleDelete = async (id) => { // xóa dữ liệu 
   //   try {
   //     await axios.delete(`/${path}/${id}`);
@@ -191,7 +191,7 @@ const Datatable = ({columns}) => {
   
   const handleChangeTypeOrder = async (type) =>{
     try{
-       if(type == "Sending"){
+       if(String(type) === "Sending"){
           setTypeOrder(type);
        }
        else{
@@ -215,20 +215,20 @@ const Datatable = ({columns}) => {
             setShowDetail(false);
             axios.post(`${url()}/orders/ChangeStatusOrder`,{IdOrder,Status}).then((order)=>{
               if(order && order.data && order.data.data._id){
-                 if( (typeOrder == "Pending") && ( (Status == "Accepted")||(Status == "Denied"))){
+                 if( ( String(typeOrder) === "Pending") && ( ( String(Status) === "Accepted")||(String(Status) === "Denied"))){
                    dispatchredux({type: "REMOVEPENDINGORDER", payload: { OrderId:order.data.data._id }});
                  }
               }
             }).catch((e)=>{
                console.log(e)
             });
-            if( (typeOrder == "Accepted") && (Status)){
+            if( (String(typeOrder) === "Accepted") && (Status)){
               setListOrder((current) =>
-                current.filter((order) => order._id !== IdOrder)
+                current.filter((order) => String(order._id) !== String(IdOrder))
               );
             }
-            if( (String(path.split("/")[0]) === "orders") && (typeOrder == "Pending") && ( (Status == "Accepted")||(Status == "Denied"))){
-                if(Status == "Accepted"){
+            if( (String(path.split("/")[0]) === "orders") && (String(typeOrder) === "Pending") && ( (String(Status) === "Accepted")||(String(Status) === "Denied"))){
+                if(String(Status) === "Accepted"){
                   let newNotification = {
                     content:"You have accepted an order!",
                     userId:user._id,
@@ -257,7 +257,7 @@ const Datatable = ({columns}) => {
                   })
                   .catch((e)=>{console.log("Lỗi api tạo thông báo",e)});
                 }
-                else if (Status == "Denied"){
+                else if ( String(Status) === "Denied"){
                   let newNotification = {
                     content:"You have denied an order!",
                     userId:user._id,
@@ -412,7 +412,7 @@ const Datatable = ({columns}) => {
                                     </div>
                                   </div>
                                   {
-                                    (typeOrder == "Pending") && (
+                                    ( String(typeOrder) === "Pending") && (
                                       <div onClick={()=>handleChangeStatusOrder(dataDetail._id,"Denied")} className="element_denied_button">
                                         <div>Denied</div>
                                       </div>
@@ -440,14 +440,14 @@ const Datatable = ({columns}) => {
                                     <div>{dataDetail.PhoneContactExtra}</div>
                                   </div>
                                   {
-                                    (typeOrder == "Pending") && (
+                                    ( String(typeOrder) === "Pending") && (
                                       <div onClick={()=>handleChangeStatusOrder(dataDetail._id,"Accepted")} className="element_accept_button">
                                         <div>Accepted</div>
                                       </div>
                                     )
                                   }
                                   {
-                                    (typeOrder == "Accepted") && (
+                                    (String(typeOrder) === "Accepted") && (
                                       <div onClick={()=>handleChangeStatusOrder(dataDetail._id,"Served")} className="element_accept_button">
                                         <div>Served</div>
                                       </div>
@@ -512,7 +512,7 @@ const Datatable = ({columns}) => {
             {namePage}
            
             {
-              ((path != "users") && (path !="orders")) && (
+              ((String(path) !== "users") && (String(path) !== "orders")) && (
                 <Link to={`/${path}/new`} className="link">
                   Add New
                 </Link>
@@ -537,7 +537,7 @@ const Datatable = ({columns}) => {
             (String(path.split("/")[0]) === "orders") && (
               <> 
                 {
-                  (typeOrder == "Pending") ? (
+                  ( String(typeOrder) === "Pending") ? (
                     <DataGrid
                       className="datagrid"
                       rows={[...new Map(Data.listOrderPending.map((item) => [item["_id"], item])).values()]}
