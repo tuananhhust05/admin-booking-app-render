@@ -422,7 +422,9 @@ const Datatable = ({columns}) => {
                               </div>
                               <div className="content_order_right">
                                   {/* <img alt="" src="https://luv.vn/wp-content/uploads/2021/10/gai-xinh-12.jpg"/> */}
-                                  <img alt={dataDetail.NameUserOrder} src={dataDetail.ImgUserOrder}/>
+                                  <Link to={`/users/${dataDetail.UserOrderId}`}>
+                                      <img alt={dataDetail.NameUserOrder} src={dataDetail.ImgUserOrder}/>
+                                  </Link>
                                   <div className="element_orders">
                                     <div>Name: </div>
                                     <div>{dataDetail.NameUserOrder}</div>

@@ -76,11 +76,12 @@
     background-color:white;
     border-radius:15px;
     z-index:11;
-    width:600px;
-    height:400px;
-    left:30%;
-    top:15%;
-    padding:50px;
+    width: 70%;
+    height: 70%;
+    left: 15%;
+    right: 15%;
+    top: 15%;
+    padding: 15px;
     display: flex;
     flex-direction: column;
     .notification_list_wrapper{

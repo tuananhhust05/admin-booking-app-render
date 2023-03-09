@@ -35,10 +35,10 @@ const Register = () => {
           }
         );
         if(res &&(res.data)&&(res.data.success)){
-          console.log(res);
+          // console.log(res);
           // auto login 
           const res2 = await axios.post(`${url()}/auth/loginmail`, credentials);
-          console.log(res2);
+          // console.log(res2);
           if (res2 && res2.data && res2.data.isAdmin) {
             res2.data.details.isAdmin=res2.data.isAdmin; 
             dispatch({ type: "LOGIN_SUCCESS", payload: res2.data.details });

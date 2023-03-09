@@ -11,7 +11,7 @@ import AssignmentReturnIcon from '@mui/icons-material/AssignmentReturn';
 import Conversation from "../conversation/Conversation";
 import Message from "../message/Message";
 import { DarkModeContext } from "../../context/darkModeContext";
-import { useContext,useState,useEffect } from "react";
+import { useContext,useState,useEffect,useRef } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { Link} from "react-router-dom";
 import axios from 'axios'
@@ -25,9 +25,12 @@ const Navbar = () => {
   const { user } = useContext(AuthContext);
   const [openListNotification,setOpenListNotification] = useState(false);
   const Data = useSelector(SearchDataSelector);
+  const scrollRef = useRef();
   const dispatchredux = useDispatch();  
   // const [chatOption,setChatOption] = useState("");  // sendNormal or 
   const [messToSend,setMessToSend] = useState("");
+  // flag to scroll down 
+  const [flagScrollDown, setFlagScrollDown] = useState(0);
   useEffect(() => {
     const takeData= async()=>{ 
       const res2 = await axios.get(`${url()}/notifications/TakeNotificationByUserId/${user._id}`); // gửi token để check 
@@ -112,7 +115,9 @@ const Navbar = () => {
        if(convChoose){
           axios.post(`${url()}/conversations/LoadMessage`,{
             conversationId:idconv,
-            userId:user._id
+            userId:user._id,
+            isDevide:true,
+            loaded:0
           }).then((res)=>{
               if(res.data && res.data.data){
                 let arr_messages = [];
@@ -120,6 +125,7 @@ const Navbar = () => {
                   arr_messages.push(res.data.data[i])
                 };
                 dispatchredux({type: "LISTMESS", payload: { listMess:arr_messages }});
+                setFlagScrollDown(flagScrollDown+1);
               }
           }).catch((e)=>{
             console.log(e)
@@ -155,13 +161,51 @@ const Navbar = () => {
           };
           dispatchredux({type: "ADDMESS", payload: { newMess:mess }});
           axios.post(`${url()}/conversations/SendMessage`,mess).catch((e)=>{console.log(e)});
-          socket.emit("sendMessage",Data.conversationChosen.memberList[0].memberId,mess)
+          socket.emit("sendMessage",Data.conversationChosen.memberList[0].memberId,mess);
+          setFlagScrollDown(flagScrollDown+1);
       }
     }
     catch(e){
       console.log(e)
     }
   }
+
+  const handleScroll = event => {
+    try{
+      if(Number(event.currentTarget.scrollTop) === 0){
+           console.log("Data transform",Data.countLoadedMessage)
+           axios.post(`${url()}/conversations/LoadMessage`,{
+               conversationId:Data.conversationChosen._id,
+               userId:user._id,
+               isDevide:true,
+               loaded:Data.countLoadedMessage
+           }).then((res)=>{
+              if(res && res.data && res.data.data && (res.data.data.length > 0)){
+                if(res.data && res.data.data){
+                  let arr_messages = [];
+                  
+                  for(let i=res.data.data.length-1; i>=0; i--){
+                    arr_messages.push(res.data.data[i])
+                  };
+                  dispatchredux({type: "LOADMESS", payload: { listMess:arr_messages }});
+                  scrollRef.current.scrollIntoView({ 
+                    behavior: 'smooth', block: 'center'
+                  });
+                }
+              }
+            }).catch((e)=>{console.log(e)})
+        }
+      }
+      catch(e){
+        console.log(e)
+      }
+  };
+
+  useEffect(() => {
+    scrollRef.current?.scrollIntoView({ behavior: "smooth" });// đoạn code để trượt xuống khi có tin nhắn mới 
+  }, [flagScrollDown]);
+
+
   const BrokenImage ="https://dvdn247.net/wp-content/uploads/2020/07/avatar-mac-dinh-1.png";
   const imageOnError = (event) => {
     event.currentTarget.src = BrokenImage;
@@ -192,7 +236,7 @@ const Navbar = () => {
           </div>
           <div onClick={()=>handleOpenChat()} className="item">
             <ChatBubbleOutlineOutlinedIcon className="icon" />
-            <div className="counter">2</div>
+            <div className="counter">{Data.countConversationUnreader}</div>
           </div>
           <Link to={`/users/${user._id}`} style={{textDecoration: "none"}}  className="link">
               <div className="item">
@@ -369,14 +413,24 @@ const Navbar = () => {
                 {
                   (Data.chatMode) && (
                     <div className="message-box">
-                          <div className="message_list_wrapper">
+                          <div className="message_list_wrapper" onScroll={(e)=>handleScroll(e)}>
                               { 
-                                [...new Map(Data.listMess.map((item) => [item["messageId"], item])).values()].map((item,index)=>(
-                                  <Message 
-                                      dataMess={item} 
-                                      dataConv={Data.conversationChosen} 
-                                      key={index}
-                                  />
+                                [...new Map(Data.listMess.map((item) => [item["messageId"], item])).values()]
+                                  .sort((a,b)=>{
+                                          if (new Date(a.createAt) < new Date(b.createAt)) {
+                                            return -1;
+                                          }
+                                          else{
+                                            return 1;
+                                          }
+                                        })
+                                  .map((item,index)=>(
+                                  <div ref={scrollRef}  key={index}>
+                                      <Message 
+                                          dataMess={item} 
+                                          dataConv={Data.conversationChosen} 
+                                      />
+                                  </div>
                                 ))
                               }
                           </div>
@@ -384,7 +438,7 @@ const Navbar = () => {
                               <input 
                                     onChange={(e)=>{setMessToSend(e.target.value)}}
                                     value = {messToSend}
-                                    onKeyPress={(e) => SendMessage(e)} 
+                                    onKeyDown={(e) => SendMessage(e)} 
                                     className="message-box-input" type="text" />
                           </div>
                     </div>

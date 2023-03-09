@@ -18,10 +18,17 @@ const INITIAL_STATE = {
     conversationChosen:{},
     listMess:[],
     isOpenSideBar:true,
-};
+    countLoadedMessage:0
+};  
 // { destination, date, options }
 // reducer bản chất là 1 hàm nhận vào 2 đối số
 // đẩy dữ liệu mặc định vào store 
+const add_arr_to_arr = (arr1,arr2)=>{
+  for(let i=0;i<arr1.length;i++){
+     arr2.push(arr1[i])
+  };
+  return arr2;
+}
 const SearchReducerRedux = (state =INITIAL_STATE, action) => {  // state lấy mặc định từ store 
     switch (action.type) {
       case "OPENCLOSESIDEBAR":
@@ -38,7 +45,11 @@ const SearchReducerRedux = (state =INITIAL_STATE, action) => {  // state lấy m
         return { 
           ...state, 
           listMess: (state.chatMode && state.conversationChosen._id && (String(state.conversationChosen._id) === String(action.payload.newMess.conversationId))) ? [action.payload.newMess,...state.listMess] : state.listMess,
-          countConversationUnreader: (state.chatMode && state.conversationChosen._id && (String(state.conversationChosen._id) === String(action.payload.newMess.conversationId))) ? state.countConversationUnreader : (state.countConversationUnreader + 1),
+          countConversationUnreader: (
+                                        (state.chatMode && state.conversationChosen._id && (String(state.conversationChosen._id) === String(action.payload.newMess.conversationId)))
+                                        || ( state.listConv.find((e)=> String(e._id) === String(action.payload.newMess.conversationId)  ))
+                                     ) 
+                                     ? state.countConversationUnreader : (state.listConv.filter((e)=> Number(e.unReader) === 1).length + 1),
           listConv: state.listConv.map(
             (conv, i) => String(conv._id) === String(action.payload.newMess.conversationId) ? 
                                      {
@@ -54,7 +65,14 @@ const SearchReducerRedux = (state =INITIAL_STATE, action) => {  // state lấy m
       case "LISTMESS":
         return { 
           ...state, 
-          listMess: action.payload.listMess
+          listMess: action.payload.listMess,
+          countLoadedMessage:action.payload.listMess.length
+        }
+      case "LOADMESS":
+        return { 
+          ...state, 
+          listMess: add_arr_to_arr(action.payload.listMess,state.listMess) ,
+          countLoadedMessage:Number(state.countLoadedMessage) + action.payload.listMess.length
         }
       case "ADDCONV":
         return { 
