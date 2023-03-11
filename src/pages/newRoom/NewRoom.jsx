@@ -11,7 +11,6 @@ import {url} from '../../config.js'
 const NewRoom = () => {
   const [info, setInfo] = useState({}); // state chứa thông tin của phòng 
   const [hotelId, setHotelId] = useState(undefined);  // set up hotelId 
-  const [rooms, setRooms] = useState([]);// 1 mảng
   const navigate = useNavigate();
   const [showNotification,setShowNotification] = useState(false); 
   const [contentNotification,setContentNotification]= useState("");
@@ -34,7 +33,6 @@ const NewRoom = () => {
            maxPeople:String(info.maxPeople),
            price:String(info.price),
            title:String(info.title),
-           roomNumbers:rooms.split(","),
            hotelNameOwn:hotelChoose.name
         };
         axios.post(`${url()}/rooms/CreateRoomRequest`,request).then((response)=>{
@@ -120,14 +118,6 @@ const NewRoom = () => {
                   />
                 </div>
               ))}
-              <div className="formInput">
-                <label>Rooms</label>
-                <textarea
-                  rows="9" cols="20"
-                  onChange={(e) => setRooms(e.target.value)}
-                  placeholder="type list room for this category, example: 123,213,215"
-                />
-              </div>
               <div className="formInput">
                 <label>Choose a hotel</label>
                 <select

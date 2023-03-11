@@ -10,6 +10,9 @@ import Notification from "../../components/notification/Notification";
 import CloseIcon from '@mui/icons-material/Close';
 import ChatBubbleIcon from '@mui/icons-material/ChatBubble';
 import CancelIcon from '@mui/icons-material/Cancel';
+import AddIcon from '@mui/icons-material/Add';
+import DeleteIcon from '@mui/icons-material/Delete';
+import {BedroomParent} from '@mui/icons-material'
 import { useLocation, useNavigate ,Link} from "react-router-dom";
 import { useEffect, useState,useContext } from "react";
 import { useDropzone } from "react-dropzone"
@@ -57,7 +60,7 @@ const Single = () => {
   
   // list user care about thí product 
   const [ listUserCare, setListUserCare] =useState([]);
-
+  
   // change pass
   const [dataToChangePass,setDataToChangePass] = useState({
     passold:"",
@@ -69,6 +72,14 @@ const Single = () => {
   const [contentNotification,setContentNotification]= useState("");
 
   const [openFormChat,setOpenFormChat]= useState(false);
+  const [openListRoom,setOpenListRoom] = useState(false);
+  const [modeListRoom,setModeListRoom] = useState("list");
+
+  // add roomNumber 
+  const [roomNumberCreate,setRoomNumberCreate]= useState("");
+  const [countBedCreateRoom,setCountBedCreateRoom] = useState(0);
+
+  const [listRoomNumber,setListRoomNumber] = useState([]);
   // replace element in react array state 
   const EditCommentListState = (idCommentEdit,CommentEdited) => {
     const newState = listComment.map(obj => {
@@ -285,7 +296,8 @@ const Single = () => {
             let res = await axios.get(`${url()}/rooms/${id}`);
             if(res && res.data){
               setData(res.data);
-              setDataRoomToEdit(res.data)
+              setDataRoomToEdit(res.data);
+              setListRoomNumber(res.data.roomNumbers);
               // dữ liệu về comment 
               await axios.post(`${url()}/comments/TakeCommentByRoomIdHotelId`,{
                  roomId: id,
@@ -693,7 +705,67 @@ const Single = () => {
        console.log(e)
     }
   }
+  
+  const handleChangeValueRoomNumberCreate = (value,field)=>{
+    try{
+       if( String(field) === "numberRoom"){
+          setRoomNumberCreate(value);
+       }
+       else if( String(field) === "countBed"){
+          setCountBedCreateRoom(value);
+       }
+    }
+    catch(e){
+      console.log(e)
+    }
+  }
+  const CreateRoomNumber = async ()=>{
+    try{
+        if(String(path) === "rooms"){
+            if((String(roomNumberCreate) !== "") && (Number(countBedCreateRoom) > 0)){
+                console.log("Dữ liệu tạo phòng",data._id,roomNumberCreate,countBedCreateRoom);
+                console.log(`${url()}/rooms/AddRoomNumber`)
+                let res = await axios.post(`${url()}/rooms/AddRoomNumber`,{
+                    IdCategory:data._id,
+                    roomNumber:roomNumberCreate,
+                    countBed:countBedCreateRoom
+                })
+                if(res && res.data && res.data.data){
+                      setListRoomNumber(current => [...current,{
+                          number:roomNumberCreate,
+                          countBed:countBedCreateRoom,
+                          unavailableDates:[]
+                      }]);
+                      setRoomNumberCreate(0);
+                      setCountBedCreateRoom("");
+                }
+                else{
+                    setRoomNumberCreate(0);
+                    setCountBedCreateRoom("");
+                }
+            }
+        };
+        setModeListRoom("list");
+    }
+    catch(e){
+        console.log(e);
+    }
+  }
 
+  const handleDeleteNumberRoom = async (numberRoom)=>{
+    try{
+      if(String(path) === "rooms"){
+        axios.post(`${url()}/rooms/DeleteRoomNumber`,{
+            IdCategory:data._id,
+            roomNumber:numberRoom
+        }).catch((e)=>{console.log(e)});
+        setListRoomNumber(listRoomNumber.filter((e)=> String(e.number) !== String(numberRoom)));
+      }
+    }
+    catch(e){
+        console.log(e);
+    }
+  }
   return (
     <div className="single">
       <MenuIcon 
@@ -811,7 +883,11 @@ const Single = () => {
                                   {data.price}
                               </span>
                             </div>
-
+                            <div className="detailItem">
+                              <span className="itemKey" onClick={()=>{setOpenListRoom(true)}}>
+                                 See List Room
+                              </span>
+                            </div>
                             <div className="detailItem">
                               <span className="itemKey">Comments</span>
                               <span className="itemValue">{listComment.length}</span>
@@ -1013,7 +1089,7 @@ const Single = () => {
           </div>
         )
       }
-
+      
       {/* list user voted  */}
       {
         (openListUserVote && (listUserVote.length>0)) && (
@@ -1056,15 +1132,76 @@ const Single = () => {
           </div>
         )
       }
+        {/* list rooms  */}
+        {
+        (openListRoom ) && (
+          <div className="list_room_ele">
+              <div className="list_room_ele_wrapper">
+                    {
+                       (String(modeListRoom) === "list") ? (
+                          <>
+                            {
+                                  listRoomNumber.map((roomNum,key)=>
+                                    (
+                                      <div key={key} className="list_room_ele_num">
+                                            <BedroomParent className="list_room_ele_num_icon" />
+                                            <p>{roomNum.number}</p>
+                                            <div className="list_room_ele_num_count_bed">
+                                              <div>{roomNum.countBed}</div>
+                                              <div>{ (Number(roomNum.countBed) > 1) ? "Beds" : "Bed" } </div>
+                                            </div>
+                                            <DeleteIcon className="DeleteRoomNumber" onClick={()=>handleDeleteNumberRoom(roomNum.number)}/>
+                                      </div>
+                                    )
+                                  )
+                            }
+                            <div className="addRoomNumber" onClick={()=>setModeListRoom("add")}>
+                                  <AddIcon/>
+                            </div>
+                          </>
+                       ):(
+                        <>
+                          <input
+                            type="text"
+                            placeholder="number room"
+                            id="numberRoom"
+                            value ={roomNumberCreate}
+                            onChange= {(e)=>handleChangeValueRoomNumberCreate(e.target.value,e.target.id)}
+                            className="lInput"
+                          />
+                          <input
+                            type="number"
+                            placeholder="count bed"
+                            id="countBed"
+                            onChange= {(e)=>handleChangeValueRoomNumberCreate(e.target.value,e.target.id)}
+                            value ={countBedCreateRoom}
+                            className="lInput"
+                          />
+                          <button 
+                                  onClick={()=>CreateRoomNumber()} 
+                                  className="submit">Submit
+                          </button>
+                          <button 
+                                  onClick={()=> setModeListRoom("list")} 
+                                  className="submit">Back To List Room 
+                          </button>
+                        </>
+                       )
+                    }
+              </div>
+          </div>
+        )
+      }
       {/*background blur*/}
       {
-        (openListUserVote || openListImage ||openEditForm ||openFormChangePass) && (
+        (openListUserVote || openListImage ||openEditForm ||openFormChangePass || openListRoom) && (
           <div 
              onClick={()=> {
                              setOpenListUserVote(false);
                              setOpenListImage(false);
                              setOpenEditForm(false);
-                             setOpenFormChangePass(false)
+                             setOpenFormChangePass(false);
+                             setOpenListRoom(false)
                            }} 
              className="background_blur">
           </div>

@@ -81,7 +81,7 @@ const Widget = ({ type }) => {
       break;
     case "revenue":
       data = {
-        title: "RENENUE",
+        title: "BEFORE",
         isMoney: true,
         link: <Link to="/orders" style={{ textDecoration: "none" }}>View net earnings</Link>,
         icon: (
@@ -94,7 +94,7 @@ const Widget = ({ type }) => {
       break;
     case "contract":
       data = {
-        title: "CONTRACT",
+        title: "AFTER",
         isMoney: true,
         link:<Link to="/orders" style={{ textDecoration: "none" }}>See details</Link>,
         icon: (

@@ -26,7 +26,7 @@ const Chart = ({ aspect, title }) => {
   }, [user._id]);
   return (
     <div className="chart">
-      <div className="title">{title}</div>
+      <div className="title">Report Order after and before</div>
       <ResponsiveContainer width="100%" aspect={aspect}>
         <AreaChart
           width={730}

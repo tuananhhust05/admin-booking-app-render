@@ -59,6 +59,7 @@ const Datatable = ({columns}) => {
   const [inforRoomChosen,setInforRoomChosen] = useState("");
   // type hiển thị danh sách orders 
   const [typeOrder,setTypeOrder] = useState("Pending");
+  const [sumValueOrder,setSumValueOrder] = useState(0);
   // đóng mở form thông tin 
   let link = ""
   const [showDetail,setShowDetail] = useState(false)
@@ -75,6 +76,19 @@ const Datatable = ({columns}) => {
     link = `${url()}/${path}/takelistuserorderedbyownerid/${user._id}`
   }
   
+  const CaculateValueCategoryOrder = (arr)=>{
+    try{
+       let sum = 0;
+       for(let i=0; i< arr.length; i++){
+           sum = sum + arr[i].Price;
+       }
+       return sum;
+    }
+    catch(e){
+      console.log(e);
+      return 0;
+    }
+  }
 
   useEffect(() => {
     const takeData= async ()=>{ 
@@ -88,6 +102,9 @@ const Datatable = ({columns}) => {
           else if (String(path.split("/")[0]) === "orders"){
             if( String(typeOrder) !== "Pending"){
               setListOrder(data.data);
+            }
+            else{
+              setSumValueOrder(CaculateValueCategoryOrder(data.data));
             }
           }
           else if (String(path.split("/")[0]) === "users"){
@@ -158,6 +175,7 @@ const Datatable = ({columns}) => {
     setShowDetail(false);
     setOpenListUnavailableDates(false)
   }
+
   // const handleDelete = async (id) => { // xóa dữ liệu 
   //   try {
   //     await axios.delete(`/${path}/${id}`);
@@ -188,7 +206,7 @@ const Datatable = ({columns}) => {
   //     },
   //   },
   // ];
-  
+
   const handleChangeTypeOrder = async (type) =>{
     try{
        if(String(type) === "Sending"){
@@ -198,6 +216,8 @@ const Datatable = ({columns}) => {
           let response = await axios.get(`${url()}/orders/takelistorderbyownerid/orderpage/${user._id}/${type}`);
           if(response && response.data && response.data.length && (response.data.length >0)){
             setListOrder(response.data); 
+            setSumValueOrder(CaculateValueCategoryOrder(response.data));
+            // console.log("Dữ liệu đơn hàng",response.data)
             setTypeOrder(type);
           }
           else{
@@ -300,13 +320,17 @@ const Datatable = ({columns}) => {
         }
         {
           (String(path.split("/")[0]) === "orders") && (
-            <select onChange={(e)=>handleChangeTypeOrder(e.target.value)} className="select_form_order">
-              <option value="Pending">Pending</option>
-              <option value="Accepted">Accepted</option>
-              <option value="Denied">Denied</option>
-              <option value="Served">Served</option>
-              <option value="Checked">Checked</option>
-           </select>
+            <div>
+                <div className="select_form_order">
+                    sum: {sumValueOrder}
+                </div>
+                <select onChange={(e)=>handleChangeTypeOrder(e.target.value)} className="select_form_order">
+                  <option value="Pending">Pending</option>
+                  <option value="Accepted">Accepted</option>
+                  <option value="Denied">Denied</option>
+                  <option value="Served">Served</option>
+              </select>
+            </div>
           )
         }
         <div className="datatable">

@@ -35,6 +35,7 @@ const Navbar = () => {
     const takeData= async()=>{ 
       const res2 = await axios.get(`${url()}/notifications/TakeNotificationByUserId/${user._id}`); // gửi token để check 
       if(res2 &&(res2.data) && res2.data.data){
+         console.log(res2.data.data)
          dispatchredux({type: "LISTNOTIFICATION", payload: { listNotification:res2.data.data }});
       };
       axios.get(`${url()}/orders/takelistorderbyownerid/orderpage/${user._id}/Pending`).then((listOrder)=>{
@@ -263,7 +264,7 @@ const Navbar = () => {
                           (
                             <div key={index}  className="notification_list_ele_wrapper">
                               {
-                                 ( String(notification.Status) === 1) ?(
+                                 (  Number(notification.Status) === 1) ?(
                                     <div onClick={()=>ReadNotification(notification._id)}>
                                       { 
                                         ((String(notification.type) === "ReceiveOrder") || (String(notification.type) ==="AcceptOrder") || (String(notification.type) === "DenyOrder")) && (
@@ -274,6 +275,9 @@ const Navbar = () => {
                                                   </div>
                                                   <div className="notification_list_ele_content">
                                                         {notification.content}
+                                                  </div>
+                                                  <div className="notification_list_ele_day">
+                                                       {new Date(notification.createAt).getDate()} Th{new Date(notification.createAt).getMonth() +1} {new Date(notification.createAt).getHours()}:{new Date(notification.createAt).getMinutes()}
                                                   </div>
                                               </div>
                                           </Link>
@@ -289,6 +293,9 @@ const Navbar = () => {
                                                           <div className="notification_list_ele_content">
                                                                 {notification.content}
                                                           </div>
+                                                          <div className="notification_list_ele_day">
+                                                              {new Date(notification.createAt).getDate()} Th{new Date(notification.createAt).getMonth() +1} {new Date(notification.createAt).getHours()}:{new Date(notification.createAt).getMinutes()}
+                                                          </div>
                                                       </div>
                                                   </Link>
                                         )
@@ -302,6 +309,9 @@ const Navbar = () => {
                                                                   </div>
                                                                   <div className="notification_list_ele_content">
                                                                         {notification.content}
+                                                                  </div>
+                                                                  <div className="">
+                                                                      {new Date(notification.createAt).getDate()} Th{new Date(notification.createAt).getMonth() +1} {new Date(notification.createAt).getHours()}:{new Date(notification.createAt).getMinutes()}
                                                                   </div>
                                                               </div>
                                                   </Link>
@@ -320,6 +330,9 @@ const Navbar = () => {
                                                     <div className="notification_list_ele_content">
                                                           {notification.content}
                                                     </div>
+                                                    <div className="notification_list_ele_day">
+                                                         {new Date(notification.createAt).getDate()} Th{new Date(notification.createAt).getMonth() +1} {new Date(notification.createAt).getHours()}:{new Date(notification.createAt).getMinutes()}
+                                                    </div>
                                                 </div>
                                             </Link>
                                           ) 
@@ -334,6 +347,9 @@ const Navbar = () => {
                                                             <div className="notification_list_ele_content">
                                                                   {notification.content}
                                                             </div>
+                                                            <div className="notification_list_ele_day">
+                                                                 {new Date(notification.createAt).getDate()} Th{new Date(notification.createAt).getMonth() +1} {new Date(notification.createAt).getHours()}:{new Date(notification.createAt).getMinutes()}
+                                                            </div>
                                                         </div>
                                                     </Link>
                                           )
@@ -347,6 +363,9 @@ const Navbar = () => {
                                                                     </div>
                                                                     <div className="notification_list_ele_content">
                                                                           {notification.content}
+                                                                    </div>
+                                                                    <div className="notification_list_ele_day">
+                                                                        {new Date(notification.createAt).getDate()} Th{new Date(notification.createAt).getMonth() +1} {new Date(notification.createAt).getHours()}:{new Date(notification.createAt).getMinutes()}
                                                                     </div>
                                                                 </div>
                                                     </Link>
@@ -391,22 +410,24 @@ const Navbar = () => {
                 {
                   (!Data.chatMode) && (
                     <div className="list_conversation">
-                        {
-                          [...new Map(Data.listConv.sort((a,b)=>{
-                              if (new Date(a.timeLastMessage) > new Date(b.timeLastMessage)) {
-                                return -1;
-                              }
-                              if (new Date(a.timeLastMessage) < new Date(b.timeLastMessage)) {
-                                return 1;
-                              }
-                              return 0;
-                            }).map((item) => [item["_id"], item])).values()].map((item,index)=>(
-                            <div key={index} onClick={()=>handleStartChat(item._id)} >
-                                <Conversation  dataConv={item}/>
-                            </div>
-      
-                          ))
-                        }
+                        <div className="list_conversation_wrapper">
+                            {
+                              [...new Map(Data.listConv.sort((a,b)=>{
+                                  if (new Date(a.timeLastMessage) > new Date(b.timeLastMessage)) {
+                                    return -1;
+                                  }
+                                  if (new Date(a.timeLastMessage) < new Date(b.timeLastMessage)) {
+                                    return 1;
+                                  }
+                                  return 0;
+                                }).map((item) => [item["_id"], item])).values()].map((item,index)=>(
+                                <div key={index} onClick={()=>handleStartChat(item._id)} >
+                                    <Conversation  dataConv={item}/>
+                                </div>
+          
+                              ))
+                            }
+                        </div>
                     </div>
                   )
                 }
