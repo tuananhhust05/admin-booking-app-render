@@ -628,6 +628,17 @@ const Single = () => {
             console.log(e)
           })
         }
+        else if( String(path) === "rooms"){
+          formData.append("RoomId",data._id);
+          axios.post(`${url()}/rooms/update/imgroom`, formData, config)
+          .then(async (response) => {
+            if (response && response.data && response.data.data) {
+              setData(response.data.data);
+            }
+          }).catch((e)=>{
+            console.log(e)
+          })
+        }
     }
   }); 
 

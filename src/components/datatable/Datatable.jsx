@@ -333,6 +333,13 @@ const Datatable = ({columns}) => {
             </div>
           )
         }
+        {/* {
+          (String(path.split("/")[0]) === "users") && (
+            <div className="user_search">
+                 <input placeholder="Type name user" className="text"/>
+            </div>
+          )
+        } */}
         <div className="datatable">
           {
             openListUnavailableDates && 
